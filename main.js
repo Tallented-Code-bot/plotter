@@ -19,14 +19,30 @@ Arm.prototype.draw=function(){
 	context.moveTo(this.position.x,this.position.y);
 	this.endPosition=this.getOtherSide();
 	context.lineTo(this.endPosition.x, this.endPosition.y);
+	context.strokeStyle="black";
 	context.stroke();
 }
 
 
+Arm.prototype.clampAngle=function(){
+	if(this.angle<0){
+		this.angle=360+this.angle;
+	}
+}
+
+
 Arm.prototype.getOtherSide=function(){
+	this.clampAngle();
+
 	let dx=Math.cos(degreesToRadians(this.angle))*this.length;
 	let dy=Math.sin(degreesToRadians(this.angle))*this.length;
 
+	//if(this.angle<0)dy*=-1;			
+	
+	if(this.angle>90&&this.angle<180){dx*=-1;}
+	if(this.angle>180&&this.angle<270){dx*=-1;dy*=-1;console.log(this.angle);}
+	if(this.angle>270&&this.angle<360){dy*=-1;}
+		
 	return{x:this.position.x+dx,y:this.position.y+dy}
 }
 
@@ -77,16 +93,27 @@ function setPlotterXY(x,y,arm1,arm2){
 	let h=Math.sqrt(dx**2+dy**2);
 
 	let hangle=radiansToDegrees(Math.asin(dx/h));
-	hangle=hangle-90;
+	//hangle=hangle-90;
 
-	angles=getAnglesOfTriangle(arm1.length,arm2.length,h);														
-	arm1.angle=hangle-angles.B
+	
+	angles=getAnglesOfTriangle(arm1.length,arm2.length,h);
+	//arm1.angle=hangle-angles.B
+	arm1.angle=angles.B-hangle+90;
 
-	console.log(angles);
-	console.log(hangle)
 	arm1.draw()
 	arm2.angle=((Math.abs(hangle-angles.B)+angles.C)-180)*-1
 	arm2.position=arm1.endPosition;
+
+
+	context.strokeText(hangle,10,10);
+	context.strokeText(arm1.angle,10,30);
+	context.strokeText(arm2.angle,10,50);
+	context.beginPath();
+	context.moveTo(arm1.position.x,arm1.position.y);
+	context.lineTo(x,y);
+	context.strokeStyle="red";
+	context.stroke();
+
 }
 
 
@@ -104,7 +131,9 @@ function update(e){
 }
 
 
-window.addEventListener("mousemove",update);
+//window.addEventListener("mousemove",update);
+arm1.angle=25;
+arm1.draw();
 
 //function loop(){
 	//context.clearRect(0,0,500,500);
