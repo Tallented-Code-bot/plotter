@@ -3,18 +3,21 @@ const context=canvas.getContext("2d");
 
 
 function Plotter(){
-			
+	//this does not do anything		
 }
 
 
 function Arm(x,y,length,angle){
+	//this is the arm class
 	this.position={x,y};
 	this.length=length;
 	this.angle=angle;
+	//set the position of the other end of the arm based on its angle and length
 	this.endPosition=this.getOtherSide();
 }
 
 Arm.prototype.draw=function(){
+	//this function draws the arm
 	context.beginPath()
 	context.moveTo(this.position.x,this.position.y);
 	this.endPosition=this.getOtherSide();
@@ -34,6 +37,7 @@ Arm.prototype.clampAngle=function(){
 Arm.prototype.getOtherSide=function(){
 	this.clampAngle();
 
+	//find the x difference and y difference from the beginning of the arm using sine and cosine
 	let dx=Math.cos(degreesToRadians(this.angle))*this.length;
 	let dy=Math.sin(degreesToRadians(this.angle))*this.length;
 
@@ -62,6 +66,7 @@ Arm.prototype.setOtherSide=function(point){
 
 
 function distanceBetweenTwoPoints(point1,point2){
+	//get the distance between two points using pythagorean theorem
 	let distX=point1.x-point2.x;
 	let distY=point1.y-point2.y;
 	console.log(distX)
